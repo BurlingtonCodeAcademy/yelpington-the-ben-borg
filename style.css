@@ -1,0 +1,49 @@
+body {
+    background-color: #EDFFEC;
+}
+
+.contain-it {
+    display: grid;
+    grid-template-areas: ' . banner banner banner . ' 
+                        ' . map map sidebar . '
+                        ' . foot foot foot . ';
+    grid-template-columns: 15% 25% 25% 20% 15%;
+    grid-template-rows: 20% 65% 15%;
+}
+
+#banner {
+    grid-area: banner;
+}
+
+#restText {
+    grid-area: sidebar;
+}
+
+#map {
+    grid-area: map;
+}
+
+#foot-form {
+    grid-area: foot;
+}
+
+#restText a {
+    text-decoration: none;
+}
+
+#restText a:link {
+    color: #7D1D3F;
+}
+
+#restText a:hover {
+    background: #9FBBCC;
+}
+
+#restText ol {
+    grid-area: sidebar;
+}
+
+#restText li {
+    list-style-type: none;
+    padding-top: 1.5rem;
+}
