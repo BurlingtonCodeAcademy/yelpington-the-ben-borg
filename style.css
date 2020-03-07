@@ -1,5 +1,5 @@
 body {
-    background-color: #EDFFEC;
+    background-color: rgb(250, 252, 250);
 }
 
 .contain-it {
@@ -27,23 +27,78 @@ body {
     grid-area: foot;
 }
 
-#restText a {
-    text-decoration: none;
-}
 
-#restText a:link {
+#restText button:link {
     color: #7D1D3F;
 }
 
-#restText a:hover {
-    background: #9FBBCC;
+#restText button:hover {
+    background: rgb(7, 40, 61);
 }
 
-#restText ol {
+#restText ul {
     grid-area: sidebar;
+    padding: 0;
+    
 }
 
 #restText li {
     list-style-type: none;
-    padding-top: 1.5rem;
+    
+    
+}
+
+.listBtn {
+    display: block;
+    width: 100%;
+    border: .5px solid grey;
+    background-color: #48ACF0;
+    text-decoration: none;
+    cursor: pointer;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 15px;
+    color: whitesmoke;
+    text-align: center;
+    
+    
+    
+}
+
+/* Modal Box Details */
+#detail-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: #000000;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal Box Content */
+.modal-things {
+    background-color: #BBE5ED;
+    margin: 10% auto;
+    padding: 25px;
+    border: 1px solid #888;
+    width: 65%;
+}
+
+/* X-out button */
+.x-out {
+    color: #8E443D;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
