@@ -6,19 +6,37 @@ window.fetch('https://json-server.burlingtoncodeacademy.now.sh/restaurants')
         const target = findElement();
         const restList = createParent();
         const items = makeListItems(jsonObj);
+        const locales = getMainMapAddrs(jsonObj);
+        console.log(locales);
 
         addChildrenToParent(items, restList);
         addListToBody(restList, target);
 
+        for (const item of locales) {
+            const latLng = getCoords(item.addr);
+            item.coords = latLng;
+        }
         console.log(items);
         console.log(typeof items);
+        console.log(locales);
+        addClicks();
 
-        addClicks(); 
-        
+        // for (const item of locales) {
+        //     item.latLng = [getCoords(item.addr)];
+        // }
+        // console.log(locales);
+        drawMainMap(locales);
+
+
 
         return undefined;
 
     });
+
+
+
+
+
 
 function findElement() {
     // find list location
@@ -33,14 +51,14 @@ function createParent() {
 }
 
 function makeListItems(json) {
-    // for each post in the JSON, make a list item
+    // for each item in the JSON, make a list item
     const items = json.map((postData) => {
         const listItem = document.createElement('button');
         listItem.textContent = `${postData.name}`;
         listItem.setAttribute('class', 'listBtn');
         listItem.setAttribute('id', `${postData.id}`);
         const linkItem = document.createElement('li');
-        
+
         linkItem.appendChild(listItem);
         return linkItem;
     });
@@ -60,47 +78,108 @@ function addListToBody(restList, target) {
     target.appendChild(restList);
 }
 
-function addClicks () {
+function getMainMapAddrs(json) {
+
+    const addrs = json.map((postData) => {
+        const id = `${postData.id}`;
+        const addr = `${postData.address}`;
+        const local = {};
+        local.id = id;
+        local.addr = addr;
+        return local;
+    });
+    return addrs;
+}
+
+function drawMainMap(addrList) {
+    let map = L.map('main-map', {
+        center: [44.4781994, -73.2126357],
+        zoom: 20
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        attribution: '&copy; Openstreetmap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    for (const ad of addrList) {
+        L.marker(ad.coords).addTo(map);
+    }
+}
+
+function addClicks() {
     const listOfFood = document.getElementsByClassName('listBtn');
     for (let food of listOfFood) {
         food.addEventListener('click', function (f) {
-                 showItem(this.id);
+            showItem(this.id);
         });
-      
+
     }
-   
+
 }
 
-// function getChoice () {
-//     item.id === 
-// }
+function getCoords(addr) {
+
+    let urlAddress = encodeURIComponent(addr);
+    let coordObj = {
+        lat: null,
+        lng: null
+    };
+
+    fetch(`https://nominatim.openstreetmap.org/search/?q=${urlAddress}&format=json`)
+        .then(data => data.json())
+        .then(addrObj => {
+            coordObj.lat = parseFloat(addrObj[0].lat)
+            coordObj.lng = parseFloat(addrObj[0].lon)
+
+        })
+    console.log(coordObj);
+    return coordObj;
+}
 
 function showItem(passedId) {
     //Gather chosen elements
     const preview = document.getElementById('detail-modal');
-    const choice = document.getElementById(passedId);
+    // const choice = document.getElementById(passedId);
     const close = document.getElementsByClassName('x-out');
 
 
     // When button is clicked, display modal with choice data populated
-window.fetch('https://json-server.burlingtoncodeacademy.now.sh/restaurants/' + passedId)
+
+    fetch('https://json-server.burlingtoncodeacademy.now.sh/restaurants/' + passedId)
         .then(data => data.json())
         .then((choiceObj) => {
             const dHead = document.getElementById('detail-head');
             const dTel = document.getElementById('detail-tel');
+            const dAddr = document.getElementById('detail-addr');
             const dHours = document.getElementById('detail-hours');
             const dWeb = document.getElementById('detail-website');
+            const dMap = document.getElementById('detail-map');
 
+
+            // console.log(mapSpot);
+            // console.log(mapSpot[0]);
+            // mapCoords = L.latLng(mapSpot);
+            // console.log(mapCoords);
             dHead.textContent = `${choiceObj.name}`;
-            dTel.textContent = `${choiceObj.address}`;
-            dHours.textContent = `${choiceObj.phone}`;
+            dTel.textContent = `${choiceObj.phone}`;
+            dAddr.textContent = `${choiceObj.address}`;
+            dHours.textContent = `${choiceObj.hours}`;
             dWeb.textContent = `${choiceObj.website}`;
 
-            
+
+
         });
 
+    const mapCoords = getCoords(`${choiceObj.address}`);
+    console.log(mapCoords);
+    detailMap(mapCoords);
+
     preview.style.display = 'block';
-        
+
+
+
+
     // When x-out span is clicked, close the preview
     close.onclick = function () {
         preview.style.display = "none";
@@ -111,4 +190,18 @@ window.fetch('https://json-server.burlingtoncodeacademy.now.sh/restaurants/' + p
             preview.style.display = "none";
         };
     }
+
 }
+
+function detailMap(coords) {
+    let map = L.map('detail-map', {
+        center: (coords),
+        zoom: 12
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        attribution: '&copy; Openstreetmap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+}
+

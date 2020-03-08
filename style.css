@@ -7,7 +7,7 @@ body {
     grid-template-areas: ' . banner banner banner . ' 
                         ' . map map sidebar . '
                         ' . foot foot foot . ';
-    grid-template-columns: 15% 25% 25% 20% 15%;
+    grid-template-columns: 15% 27.5% 27.5% 15% 15%;
     grid-template-rows: 20% 65% 15%;
 }
 
@@ -19,7 +19,7 @@ body {
     grid-area: sidebar;
 }
 
-#map {
+#main-map {
     grid-area: map;
 }
 
@@ -57,12 +57,10 @@ body {
     cursor: pointer;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    font-size: 15px;
+    font-size: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     color: whitesmoke;
-    text-align: center;
-    
-    
-    
+    text-align: center;  
 }
 
 /* Modal Box Details */
@@ -86,6 +84,13 @@ body {
     padding: 25px;
     border: 1px solid #888;
     width: 65%;
+    box-shadow: 4px 4px #5D737E;
+}
+
+#detail-map {
+    height: 400px;
+    z-index: 2;
+   
 }
 
 /* X-out button */
@@ -96,8 +101,8 @@ body {
     font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
+.x-out:hover,
+.x-out:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
