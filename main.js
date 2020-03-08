@@ -26,6 +26,12 @@ window.fetch('https://json-server.burlingtoncodeacademy.now.sh/restaurants')
         // }
         // console.log(locales);
         drawMainMap(locales);
+        locales.forEach((ad) => {
+            const latArr = getCoords(ad.addr);
+            let point = L.latLng(latArr);
+            console.log(point);
+            return L.marker(point).addTo(map);
+        })
 
 
 
@@ -102,9 +108,8 @@ function drawMainMap(addrList) {
         attribution: '&copy; Openstreetmap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    for (const ad of addrList) {
-        L.marker(ad.coords).addTo(map);
-    }
+    
+
 }
 
 function addClicks() {
@@ -122,8 +127,8 @@ function getCoords(addr) {
 
     let urlAddress = encodeURIComponent(addr);
     let coordObj = {
-        lat: null,
-        lng: null
+        lat: 0,
+        lng: 0
     };
 
     fetch(`https://nominatim.openstreetmap.org/search/?q=${urlAddress}&format=json`)
@@ -167,13 +172,13 @@ function showItem(passedId) {
             dHours.textContent = `${choiceObj.hours}`;
             dWeb.textContent = `${choiceObj.website}`;
 
-
+            const mapCoords = getCoords(`${choiceObj.address}`);
+            console.log(mapCoords);
+            detailMap(mapCoords);
 
         });
 
-    const mapCoords = getCoords(`${choiceObj.address}`);
-    console.log(mapCoords);
-    detailMap(mapCoords);
+
 
     preview.style.display = 'block';
 

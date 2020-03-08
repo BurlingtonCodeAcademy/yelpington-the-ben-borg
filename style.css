@@ -13,6 +13,8 @@ body {
 
 #banner {
     grid-area: banner;
+    background-color: #48ACF0;
+    text-align: center;
 }
 
 #restText {
@@ -21,6 +23,7 @@ body {
 
 #main-map {
     grid-area: map;
+    height: 100%;
 }
 
 #foot-form {
@@ -67,7 +70,7 @@ body {
 #detail-modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 4;
     left: 0;
     top: 0;
     width: 100%;
@@ -89,7 +92,7 @@ body {
 
 #detail-map {
     height: 400px;
-    z-index: 2;
+    
    
 }
 
