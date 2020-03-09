@@ -25,14 +25,9 @@ window.fetch('https://json-server.burlingtoncodeacademy.now.sh/restaurants')
         //     item.latLng = [getCoords(item.addr)];
         // }
         // console.log(locales);
-        drawMainMap(locales);
-        locales.forEach((ad) => {
-            const latArr = getCoords(ad.addr);
-            let point = L.latLng(latArr);
-            console.log(point);
-            return L.marker(point).addTo(map);
-        })
 
+        // drawMainMap(locales);
+        
 
 
         return undefined;
@@ -108,7 +103,14 @@ function drawMainMap(addrList) {
         attribution: '&copy; Openstreetmap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    
+    addrList.forEach((ad) => {
+        const latArr = getCoords(ad.addr);
+
+        console.log(latArr);
+        let mark = L.marker([latArr.lat, latArr.lng]).addTo(map);
+        return mark;
+    })
+
 
 }
 
@@ -126,14 +128,13 @@ function addClicks() {
 function getCoords(addr) {
 
     let urlAddress = encodeURIComponent(addr);
-    let coordObj = {
-        lat: 0,
-        lng: 0
-    };
+   
+    const coordObj = {};  
 
     fetch(`https://nominatim.openstreetmap.org/search/?q=${urlAddress}&format=json`)
         .then(data => data.json())
         .then(addrObj => {
+            
             coordObj.lat = parseFloat(addrObj[0].lat)
             coordObj.lng = parseFloat(addrObj[0].lon)
 
@@ -178,12 +179,9 @@ function showItem(passedId) {
 
         });
 
-
+        
 
     preview.style.display = 'block';
-
-
-
 
     // When x-out span is clicked, close the preview
     close.onclick = function () {
@@ -199,14 +197,13 @@ function showItem(passedId) {
 }
 
 function detailMap(coords) {
-    let map = L.map('detail-map', {
-        center: (coords),
-        zoom: 12
-    });
+    let dMap = L.map('detail-map').setView(L.latLng(coords[0], coords[1]), 12);
+
+    dMap.invalidateSize();
 
     L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
         maxZoom: 20,
         attribution: '&copy; Openstreetmap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    }).addTo(dMap);
 }
 
