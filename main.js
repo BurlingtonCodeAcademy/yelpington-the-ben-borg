@@ -26,8 +26,8 @@ window.fetch('https://json-server.burlingtoncodeacademy.now.sh/restaurants')
         // }
         // console.log(locales);
 
-        // drawMainMap(locales);
-        
+        drawMainMap(locales);
+
 
 
         return undefined;
@@ -92,24 +92,36 @@ function getMainMapAddrs(json) {
     return addrs;
 }
 
-function drawMainMap(addrList) {
-    let map = L.map('main-map', {
-        center: [44.4781994, -73.2126357],
-        zoom: 20
-    });
+async function drawMainMap(addrList) {
+    let map = L.map('main-map').setView([44.4781994, -73.2126357],15);
 
     L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
         maxZoom: 20,
         attribution: '&copy; Openstreetmap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    addrList.forEach((ad) => {
-        const latArr = getCoords(ad.addr);
 
-        console.log(latArr);
-        let mark = L.marker([latArr.lat, latArr.lng]).addTo(map);
-        return mark;
-    })
+    for await (const ad of addrList) {
+        const latArr = await getCoords(ad.addr);
+
+        console.log({latArr});
+        let { lat, lon } = latArr;
+        console.log({lat})
+        console.log({lon})
+        latsLongs.push(latArr)
+        let mark = L.marker([lat, lon]).addTo(map);
+    }
+
+    // addrList.forEach((ad) => {
+    //     const latArr = await getCoords(ad.addr);
+
+    //     console.log({latArr});
+    //     let { lat, lon } = latArr;
+    //     console.log({lat})
+    //     console.log({lon})
+    //     let mark = L.marker([lat, lon]).addTo(map);
+    //     return mark;
+    // })
 
 
 }
@@ -125,22 +137,22 @@ function addClicks() {
 
 }
 
-function getCoords(addr) {
+async function getCoords(addr) {
 
     let urlAddress = encodeURIComponent(addr);
-   
-    const coordObj = {};  
 
-    fetch(`https://nominatim.openstreetmap.org/search/?q=${urlAddress}&format=json`)
+    const coordObj = {};
+
+    let coords = await fetch(`https://nominatim.openstreetmap.org/search/?q=${urlAddress}&format=json`)
         .then(data => data.json())
         .then(addrObj => {
-            
             coordObj.lat = parseFloat(addrObj[0].lat)
             coordObj.lng = parseFloat(addrObj[0].lon)
+            console.log(coordObj);
+            return {lat: coordObj.lat, lon: coordObj.lng};
 
         })
-    console.log(coordObj);
-    return coordObj;
+        return coords;
 }
 
 function showItem(passedId) {
@@ -174,12 +186,12 @@ function showItem(passedId) {
             dWeb.textContent = `${choiceObj.website}`;
 
             const mapCoords = getCoords(`${choiceObj.address}`);
-            console.log(mapCoords);
+            console.log({mapCoords});
             detailMap(mapCoords);
 
         });
 
-        
+
 
     preview.style.display = 'block';
 
@@ -197,7 +209,11 @@ function showItem(passedId) {
 }
 
 function detailMap(coords) {
-    let dMap = L.map('detail-map').setView(L.latLng(coords[0], coords[1]), 12);
+    console.log('coords: ', coords);
+    console.log('coords lat: ', coords.lat)
+    console.log('coords lng: ', coords.lng)
+    // coords[0] and coords[1] should be coords.lat and coords.lng
+    let dMap = L.map('detail-map').setView(L.latLng(coords.lat, coords.lng), 12);
 
     dMap.invalidateSize();
 
