@@ -108,7 +108,6 @@ async function drawMainMap(addrList) {
         let { lat, lon } = latArr;
         console.log({lat})
         console.log({lon})
-        latsLongs.push(latArr)
         let mark = L.marker([lat, lon]).addTo(map);
     }
 
